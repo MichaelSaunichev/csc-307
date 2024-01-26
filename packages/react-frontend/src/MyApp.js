@@ -24,10 +24,17 @@ function MyApp() {
 
   function updateList(person) { 
     postUser(person)
-      .then(() => setCharacters([...characters, person]))
+      .then((response) => {
+        if (response.status === 201) {
+          return response.json();
+        } else {
+          console.log("Error");
+        }
+      })
+      .then((addedUser) => setCharacters([...characters, addedUser]))
       .catch((error) => {
         console.log(error);
-      })
+      });
   }
 
   useEffect(() => {
@@ -37,11 +44,23 @@ function MyApp() {
       .catch((error) => { console.log(error); });
   }, [] );
 
-  function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => {
-      return i !== index;
-    });
-    setCharacters(updated);
+  function removeOneCharacter(id) {
+    fetch(`http://localhost:8000/users/${id}`, {
+      method: 'DELETE',
+    })
+      .then((response) => {
+        if (response.status === 204) {
+          const updated = characters.filter((character) => character.id !== id);
+          setCharacters(updated);
+        } else if (response.status === 404) {
+          console.log("404 Error");
+        } else {
+          console.log("Error");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (

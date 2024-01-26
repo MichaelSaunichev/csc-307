@@ -66,16 +66,19 @@ app.get("/users", (req, res) => {
     let result = findUsersByNameAndJob(name, job);
     result = { users_list: result };
     res.send(result);
-  } else if (name !== undefined) {
+  }
+  else if (name !== undefined) {
     let result = findUserByName(name);
     result = { users_list: result };
     res.send(result);
-  } else if (job !== undefined) {
+  }
+  else if (job !== undefined) {
     let result = findUserByJob(job);
     result = { users_list: result };
     res.send(result);
     
-  } else {
+  }
+  else {
     res.send(users);
   }
 });
@@ -88,20 +91,33 @@ app.get("/users/:id", (req, res) => {
   let result = findUserById(id);
   if (result === undefined) {
     res.status(404).send("Resource not found.");
-  } else {
+  } 
+  else {
     res.send(result);
   }
 });
 
+const generateRandomLetters = () => {
+  const getRandomLetter = () => String.fromCharCode(97 + Math.floor(Math.random() * 26));
+  return getRandomLetter() + getRandomLetter() + getRandomLetter();
+};
+
+const generateID = () => {
+  const randomLetters = generateRandomLetters();
+  const randomNumbers = Math.random().toString().substring(2, 5);
+  return randomLetters + randomNumbers;
+};
+
 const addUser = (user) => {
-  users["users_list"].push(user);
-  return user;
+  const userWithID = { ...user, id: generateID() };
+  users["users_list"].push(userWithID);
+  return userWithID;
 };
 
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
-  addUser(userToAdd);
-  res.send();
+  const addedUser = addUser(userToAdd);
+  res.status(201).send(addedUser);
 });
 
 app.delete("/users/:id", (req, res) => {
@@ -110,7 +126,8 @@ app.delete("/users/:id", (req, res) => {
 
   if (index === -1) {
     res.status(404).send("Not valid id");
-  } else {
+  }
+  else {
     users["users_list"].splice(index, 1);
     res.status(204).send();
   }
