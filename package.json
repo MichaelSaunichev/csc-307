@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon backend.js",
-    "start": "node backend.js"
+    "dev": "npm run dev -w express-backend",
+    "start": "npm start -w react-frontend"
   },
   "author": "",
   "license": "ISC",
